@@ -11,48 +11,103 @@ const navLinks = [
   id="navbar"
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
 >
-  <nav class="flex items-center justify-between px-8 py-6 md:px-16">
+  <nav class="flex items-center justify-between px-8 py-5 md:px-16">
+
     <!-- Logo -->
-    <a href="/" class="font-display text-xl tracking-widest uppercase text-[#f5f4f0]">
-      Levitere
+    <a href="/" aria-label="Levitere — Home">
+      <img
+        src="/images/logo_name.png"
+        alt="Levitere"
+        class="h-7 md:h-8 w-auto object-contain"
+      />
     </a>
 
-    <!-- Links -->
+    <!-- Desktop links -->
     <ul class="hidden md:flex items-center gap-10">
-      {
-        navLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class="text-sm tracking-widest uppercase text-[#f5f4f0]/60 hover:text-[#f5f4f0] transition-colors duration-300"
-            >
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="text-sm tracking-widest uppercase text-[#f5f4f0]/60 hover:text-[#f5f4f0] transition-colors duration-300"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
     </ul>
 
-    <!-- Mobile menu button (placeholder) -->
+    <!-- Mobile: hamburger -->
     <button
       id="menu-toggle"
-      class="md:hidden flex flex-col gap-1.5 p-2"
+      class="md:hidden flex flex-col gap-[5px] p-2"
       aria-label="Toggle menu"
+      aria-expanded="false"
     >
-      <span class="block w-6 h-px bg-[#f5f4f0]"></span>
-      <span class="block w-6 h-px bg-[#f5f4f0]"></span>
+      <span id="bar-1" class="block w-6 h-px bg-[#f5f4f0] transition-all duration-300"></span>
+      <span id="bar-2" class="block w-6 h-px bg-[#f5f4f0] transition-all duration-300"></span>
     </button>
   </nav>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden flex-col px-8 pb-8 gap-6 bg-[#0a0a0a]"
+  >
+    {navLinks.map((link) => (
+      <a
+        href={link.href}
+        class="text-sm tracking-widest uppercase text-[#f5f4f0]/60 hover:text-[#f5f4f0] transition-colors duration-300 mobile-link"
+      >
+        {link.label}
+      </a>
+    ))}
+  </div>
 </header>
 
 <script>
-  // Navbar background on scroll
+  // Scroll: add background
   const navbar = document.getElementById('navbar')
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 80) {
-      navbar?.classList.add('bg-[#0a0a0a]/90', 'backdrop-blur-sm')
+    if (window.scrollY > 60) {
+      navbar?.classList.add('bg-[#0a0a0a]/95', 'backdrop-blur-sm')
     } else {
-      navbar?.classList.remove('bg-[#0a0a0a]/90', 'backdrop-blur-sm')
+      navbar?.classList.remove('bg-[#0a0a0a]/95', 'backdrop-blur-sm')
     }
+  })
+
+  // Mobile menu toggle
+  const toggle = document.getElementById('menu-toggle')
+  const menu = document.getElementById('mobile-menu')
+  const bar1 = document.getElementById('bar-1')
+  const bar2 = document.getElementById('bar-2')
+  let open = false
+
+  toggle?.addEventListener('click', () => {
+    open = !open
+    if (open) {
+      menu?.classList.remove('hidden')
+      menu?.classList.add('flex')
+      bar1?.classList.add('rotate-45', 'translate-y-[7px]')
+      bar2?.classList.add('-rotate-45', '-translate-y-[0px]')
+      toggle.setAttribute('aria-expanded', 'true')
+    } else {
+      menu?.classList.add('hidden')
+      menu?.classList.remove('flex')
+      bar1?.classList.remove('rotate-45', 'translate-y-[7px]')
+      bar2?.classList.remove('-rotate-45', '-translate-y-[0px]')
+      toggle.setAttribute('aria-expanded', 'false')
+    }
+  })
+
+  // Close mobile menu when a link is clicked
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      open = false
+      menu?.classList.add('hidden')
+      menu?.classList.remove('flex')
+      bar1?.classList.remove('rotate-45', 'translate-y-[7px]')
+      bar2?.classList.remove('-rotate-45')
+      toggle?.setAttribute('aria-expanded', 'false')
+    })
   })
 </script>
