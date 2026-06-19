@@ -1,0 +1,89 @@
+---
+// Showreel section — presentation video with play/pause
+---
+
+<section id="showreel" class="section-padding px-8 md:px-16">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="mb-10 md:mb-14">
+      <p class="text-xs tracking-[0.3em] uppercase text-[#c8b49a] mb-4">Who we are</p>
+      <h2 class="font-display font-light text-4xl md:text-5xl text-[#0a0a0a] max-w-2xl leading-[1.15]">
+        We create content that makes properties
+        <em class="italic"> easier to understand, more immersive to experience</em>
+        and more memorable.
+      </h2>
+    </div>
+
+    <!-- Video player -->
+    <div
+      id="showreel-wrapper"
+      class="relative w-full aspect-video bg-[#e8e6e1] cursor-pointer overflow-hidden group"
+    >
+      <video
+        id="showreel-video"
+        class="w-full h-full object-cover"
+        preload="metadata"
+      >
+        <source src="/videos/showreel.mp4" type="video/mp4" />
+      </video>
+
+      <!-- Play/pause overlay -->
+      <div
+        id="play-overlay"
+        class="absolute inset-0 flex items-center justify-center bg-[#0a0a0a]/20 transition-opacity duration-300"
+      >
+        <button
+          id="play-btn"
+          aria-label="Play showreel"
+          class="w-16 h-16 md:w-20 md:h-20 rounded-full border border-[#f5f4f0]/60 flex items-center justify-center hover:border-[#f5f4f0] transition-colors duration-300"
+        >
+          <svg id="icon-play" class="w-5 h-5 md:w-6 md:h-6 text-[#f5f4f0] ml-1" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg id="icon-pause" class="w-5 h-5 md:w-6 md:h-6 text-[#f5f4f0] hidden" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const video = document.getElementById('showreel-video') as HTMLVideoElement
+  const overlay = document.getElementById('play-overlay')
+  const playBtn = document.getElementById('play-btn')
+  const iconPlay = document.getElementById('icon-play')
+  const iconPause = document.getElementById('icon-pause')
+
+  function togglePlay() {
+    if (video.paused) {
+      video.play()
+      iconPlay?.classList.add('hidden')
+      iconPause?.classList.remove('hidden')
+      overlay?.classList.add('opacity-0')
+    } else {
+      video.pause()
+      iconPlay?.classList.remove('hidden')
+      iconPause?.classList.add('hidden')
+      overlay?.classList.remove('opacity-0')
+    }
+  }
+
+  playBtn?.addEventListener('click', togglePlay)
+
+  const wrapper = document.getElementById('showreel-wrapper')
+  wrapper?.addEventListener('mouseenter', () => {
+    if (!video.paused) overlay?.classList.remove('opacity-0')
+  })
+  wrapper?.addEventListener('mouseleave', () => {
+    if (!video.paused) overlay?.classList.add('opacity-0')
+  })
+
+  video?.addEventListener('ended', () => {
+    iconPlay?.classList.remove('hidden')
+    iconPause?.classList.add('hidden')
+    overlay?.classList.remove('opacity-0')
+  })
+</script>

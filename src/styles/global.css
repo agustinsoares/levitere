@@ -20,8 +20,8 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: var(--color-black);
-    color: var(--color-white);
+    background-color: #f5f4f0;
+    color: #0a0a0a;
   }
 
   body {
@@ -29,6 +29,8 @@
     font-size: 1rem;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    background-color: #f5f4f0;
+    color: #0a0a0a;
   }
 
   h1, h2, h3, h4 {
@@ -48,10 +50,6 @@
   .section-padding {
     padding-top: var(--spacing-section);
     padding-bottom: var(--spacing-section);
-  }
-
-  .text-accent {
-    color: var(--color-accent);
   }
 
   .font-display {

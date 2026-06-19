@@ -16,7 +16,7 @@ const navLinks = [
     <!-- Logo -->
     <a href="/" aria-label="Levitere — Home">
       <img
-        src="/images/logo_name.png"
+        src="/images/logo_nombre.png"
         alt="Levitere"
         class="h-7 md:h-8 w-auto object-contain"
       />
@@ -28,7 +28,8 @@ const navLinks = [
         <li>
           <a
             href={link.href}
-            class="text-sm tracking-widest uppercase text-[#f5f4f0]/60 hover:text-[#f5f4f0] transition-colors duration-300"
+            id={`nav-${link.label.toLowerCase()}`}
+            class="nav-link text-sm tracking-widest uppercase transition-colors duration-300 text-[#f5f4f0]/70 hover:text-[#f5f4f0]"
           >
             {link.label}
           </a>
@@ -36,7 +37,7 @@ const navLinks = [
       ))}
     </ul>
 
-    <!-- Mobile: hamburger -->
+    <!-- Mobile hamburger -->
     <button
       id="menu-toggle"
       class="md:hidden flex flex-col gap-[5px] p-2"
@@ -51,12 +52,12 @@ const navLinks = [
   <!-- Mobile menu -->
   <div
     id="mobile-menu"
-    class="hidden md:hidden flex-col px-8 pb-8 gap-6 bg-[#0a0a0a]"
+    class="hidden md:hidden flex-col px-8 pb-8 gap-6"
   >
     {navLinks.map((link) => (
       <a
         href={link.href}
-        class="text-sm tracking-widest uppercase text-[#f5f4f0]/60 hover:text-[#f5f4f0] transition-colors duration-300 mobile-link"
+        class="mobile-link text-sm tracking-widest uppercase transition-colors duration-300"
       >
         {link.label}
       </a>
@@ -65,41 +66,83 @@ const navLinks = [
 </header>
 
 <script>
-  // Scroll: add background
   const navbar = document.getElementById('navbar')
+  const navLinks = document.querySelectorAll('.nav-link')
+  const mobileLinks = document.querySelectorAll('.mobile-link')
+  const bar1 = document.getElementById('bar-1')
+  const bar2 = document.getElementById('bar-2')
+  const toggle = document.getElementById('menu-toggle')
+  const menu = document.getElementById('mobile-menu')
+
+  // Hero height threshold
+  function getHeroHeight(): number {
+    return window.innerHeight
+  }
+
+  function setLight() {
+    // White background, dark text
+    navbar?.classList.add('bg-[#f5f4f0]', 'shadow-sm')
+    navbar?.classList.remove('bg-transparent')
+    navLinks.forEach(l => {
+      l.classList.remove('text-[#f5f4f0]/70', 'hover:text-[#f5f4f0]')
+      l.classList.add('text-[#0a0a0a]/60', 'hover:text-[#0a0a0a]')
+    })
+    mobileLinks.forEach(l => {
+      l.classList.remove('text-[#f5f4f0]/70')
+      l.classList.add('text-[#0a0a0a]/60')
+    })
+    if (bar1) bar1.classList.replace('bg-[#f5f4f0]', 'bg-[#0a0a0a]')
+    if (bar2) bar2.classList.replace('bg-[#f5f4f0]', 'bg-[#0a0a0a]')
+    if (menu) menu.classList.add('bg-[#f5f4f0]')
+  }
+
+  function setDark() {
+    // Transparent background, white text (over hero video)
+    navbar?.classList.remove('bg-[#f5f4f0]', 'shadow-sm')
+    navbar?.classList.add('bg-transparent')
+    navLinks.forEach(l => {
+      l.classList.add('text-[#f5f4f0]/70', 'hover:text-[#f5f4f0]')
+      l.classList.remove('text-[#0a0a0a]/60', 'hover:text-[#0a0a0a]')
+    })
+    mobileLinks.forEach(l => {
+      l.classList.add('text-[#f5f4f0]/70')
+      l.classList.remove('text-[#0a0a0a]/60')
+    })
+    if (bar1) bar1.classList.replace('bg-[#0a0a0a]', 'bg-[#f5f4f0]')
+    if (bar2) bar2.classList.replace('bg-[#0a0a0a]', 'bg-[#f5f4f0]')
+    if (menu) menu.classList.remove('bg-[#f5f4f0]')
+  }
+
+  // Initial state: over hero = dark
+  setDark()
+
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 60) {
-      navbar?.classList.add('bg-[#0a0a0a]/95', 'backdrop-blur-sm')
+    if (window.scrollY >= getHeroHeight() - 80) {
+      setLight()
     } else {
-      navbar?.classList.remove('bg-[#0a0a0a]/95', 'backdrop-blur-sm')
+      setDark()
     }
   })
 
-  // Mobile menu toggle
-  const toggle = document.getElementById('menu-toggle')
-  const menu = document.getElementById('mobile-menu')
-  const bar1 = document.getElementById('bar-1')
-  const bar2 = document.getElementById('bar-2')
+  // Mobile toggle
   let open = false
-
   toggle?.addEventListener('click', () => {
     open = !open
     if (open) {
       menu?.classList.remove('hidden')
       menu?.classList.add('flex')
       bar1?.classList.add('rotate-45', 'translate-y-[7px]')
-      bar2?.classList.add('-rotate-45', '-translate-y-[0px]')
+      bar2?.classList.add('-rotate-45')
       toggle.setAttribute('aria-expanded', 'true')
     } else {
       menu?.classList.add('hidden')
       menu?.classList.remove('flex')
       bar1?.classList.remove('rotate-45', 'translate-y-[7px]')
-      bar2?.classList.remove('-rotate-45', '-translate-y-[0px]')
+      bar2?.classList.remove('-rotate-45')
       toggle.setAttribute('aria-expanded', 'false')
     }
   })
 
-  // Close mobile menu when a link is clicked
   document.querySelectorAll('.mobile-link').forEach(link => {
     link.addEventListener('click', () => {
       open = false

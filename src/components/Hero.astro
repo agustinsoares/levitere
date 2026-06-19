@@ -1,56 +1,44 @@
 ---
-// Hero section — full viewport, cinematic opening
-// Content to be filled with real copy and video/image
+// Hero section — full viewport cinematic video background
 ---
 
-<section
-  id="hero"
-  class="relative h-screen w-full flex items-end overflow-hidden"
->
-  <!-- Background: replace src with real video or image -->
-  <div class="absolute inset-0 bg-[#0a0a0a]">
-    <!-- VIDEO VERSION (uncomment when ready):
-    <video
-      class="w-full h-full object-cover opacity-60"
-      autoplay
-      muted
-      loop
-      playsinline
-      src="/videos/hero.mp4"
-    ></video>
-    -->
+<section id="hero" class="relative h-screen w-full flex items-end overflow-hidden">
 
-    <!-- IMAGE PLACEHOLDER -->
-    <div class="w-full h-full bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] opacity-80"></div>
-  </div>
+  <!-- Background video -->
+  <video
+    class="absolute inset-0 w-full h-full object-cover"
+    autoplay
+    muted
+    loop
+    playsinline
+  >
+    <source src="/videos/hero.mp4" type="video/mp4" />
+  </video>
 
-  <!-- Gradient overlay bottom -->
-  <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
+  <!-- Dark overlay -->
+  <div class="absolute inset-0 bg-[#0a0a0a]/50"></div>
+
+  <!-- Gradient bottom -->
+  <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/20 to-transparent"></div>
 
   <!-- Content -->
-  <div class="relative z-10 px-8 md:px-16 pb-20 md:pb-28 max-w-5xl">
-    <p class="text-xs tracking-[0.3em] uppercase text-[#c8b49a] mb-6">
-      <!-- Eyebrow text / tagline -->
-      Visual Production
-    </p>
+  <div class="relative z-10 px-8 md:px-16 pb-20 md:pb-32 max-w-5xl">
     <h1 class="font-display font-light text-5xl md:text-7xl lg:text-8xl text-[#f5f4f0] leading-[1.05] mb-8">
-      <!-- Main headline — placeholder -->
-      Cinematic experiences<br />
-      <em class="italic">for extraordinary spaces</em>
+      Cinematic visual experiences<br />
+      <em class="italic">for a new era of<br />property marketing</em>
     </h1>
     <a
-      href="#work"
+      href="#showreel"
       class="inline-flex items-center gap-3 text-sm tracking-widest uppercase text-[#f5f4f0]/60 hover:text-[#f5f4f0] transition-colors group"
     >
-      View our work
+      Watch our showreel
       <span class="block w-8 h-px bg-current transition-all duration-300 group-hover:w-12"></span>
     </a>
   </div>
 
   <!-- Scroll indicator -->
-  <div class="absolute bottom-8 right-8 md:right-16 flex flex-col items-center gap-2">
-    <span class="text-[10px] tracking-[0.25em] uppercase text-[#f5f4f0]/30 rotate-90 origin-center mb-4">Scroll</span>
-    <div class="w-px h-12 bg-[#f5f4f0]/20 relative overflow-hidden">
+  <div class="absolute bottom-10 right-8 md:right-16 flex flex-col items-center gap-2">
+    <div class="w-px h-14 bg-[#f5f4f0]/20 relative overflow-hidden">
       <div class="w-full h-full bg-[#c8b49a] animate-scroll-line"></div>
     </div>
   </div>

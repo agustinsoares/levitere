@@ -1,97 +1,77 @@
 ---
-// Work section — portfolio grid
-// Projects array: replace with real content when available
-
-const projects = [
-  {
-    id: '01',
-    title: 'Project Title One',
-    category: 'FPV Drone',
-    location: 'Valencia, ES',
-    src: '/images/project-1.jpg', // replace with real image
-  },
-  {
-    id: '02',
-    title: 'Project Title Two',
-    category: 'Architecture',
-    location: 'Barcelona, ES',
-    src: '/images/project-2.jpg',
-  },
-  {
-    id: '03',
-    title: 'Project Title Three',
-    category: 'Video',
-    location: 'Madrid, ES',
-    src: '/images/project-3.jpg',
-  },
-  {
-    id: '04',
-    title: 'Project Title Four',
-    category: '3D Render',
-    location: 'Valencia, ES',
-    src: '/images/project-4.jpg',
-  },
+const projects: Array<{
+  id: string
+  title: string
+  category: string
+  location: string
+  src?: string
+  wide?: boolean
+}> = [
+  // Añadir proyectos aquí cuando estén listos:
+  // {
+  //   id: '01',
+  //   title: 'Project Name',
+  //   category: 'FPV Drone',
+  //   location: 'Valencia, ES',
+  //   src: '/images/projects/project-1.jpg',
+  //   wide: true,
+  // },
 ]
+
+const hasProjects = projects.length > 0
 ---
 
-<section id="work" class="section-padding px-8 md:px-16">
-  <!-- Section header -->
-  <div class="flex items-end justify-between mb-16 md:mb-24">
-    <div>
-      <p class="text-xs tracking-[0.3em] uppercase text-[#c8b49a] mb-4">Selected Work</p>
-      <h2 class="font-display font-light text-4xl md:text-6xl text-[#f5f4f0]">
-        Our projects
-      </h2>
+<section id="work" class="section-padding px-8 md:px-16 border-t border-[#0a0a0a]/10">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="flex items-end justify-between mb-16 md:mb-24">
+      <div>
+        <p class="text-xs tracking-[0.3em] uppercase text-[#c8b49a] mb-4">Portfolio</p>
+        <h2 class="font-display font-light text-4xl md:text-6xl text-[#0a0a0a]">
+          Selected work
+        </h2>
+      </div>
+      {hasProjects && (
+        <span class="hidden md:block text-sm text-[#0a0a0a]/30 tracking-widest">
+          {projects.length} projects
+        </span>
+      )}
     </div>
-    <span class="hidden md:block text-sm text-[#f5f4f0]/30 tracking-widest">
-      {projects.length} projects
-    </span>
-  </div>
 
-  <!-- Projects grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-    {
-      projects.map((project, i) => (
-        <article
-          class={`group relative overflow-hidden cursor-pointer ${
-            i === 0 ? 'md:col-span-2' : ''
-          }`}
-        >
-          <!-- Image placeholder (replace with real img) -->
-          <div
-            class={`relative overflow-hidden bg-[#1a1a1a] ${
-              i === 0 ? 'aspect-[16/7]' : 'aspect-[4/3]'
-            }`}
-          >
-            <!-- Uncomment when images are ready:
-            <img
-              src={project.src}
-              alt={project.title}
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            -->
-            <div class="w-full h-full bg-gradient-to-br from-[#2e2e2e] to-[#1a1a1a]" />
-
-            <!-- Overlay on hover -->
-            <div class="absolute inset-0 bg-[#0a0a0a]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </div>
-
-          <!-- Project info -->
-          <div class="flex items-start justify-between mt-4">
-            <div>
-              <h3 class="font-display text-xl md:text-2xl text-[#f5f4f0] group-hover:text-[#c8b49a] transition-colors duration-300">
-                {project.title}
-              </h3>
-              <p class="text-sm text-[#f5f4f0]/40 mt-1">
-                {project.category} — {project.location}
-              </p>
+    {hasProjects ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        {projects.map((project, i) => (
+          <article class={`group cursor-pointer ${project.wide ? 'md:col-span-2' : ''}`}>
+            <div class={`relative overflow-hidden bg-[#e8e6e1] ${project.wide ? 'aspect-[16/7]' : 'aspect-[4/3]'}`}>
+              {project.src && (
+                <img
+                  src={project.src}
+                  alt={project.title}
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              )}
+              <div class="absolute inset-0 bg-[#0a0a0a]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
-            <span class="text-xs text-[#f5f4f0]/20 tracking-widest mt-1">
-              {project.id}
-            </span>
-          </div>
-        </article>
-      ))
-    }
+            <div class="flex items-start justify-between mt-4">
+              <div>
+                <h3 class="font-display text-xl md:text-2xl text-[#0a0a0a] group-hover:text-[#c8b49a] transition-colors duration-300">
+                  {project.title}
+                </h3>
+                <p class="text-sm text-[#0a0a0a]/40 mt-1">{project.category} — {project.location}</p>
+              </div>
+              <span class="text-xs text-[#0a0a0a]/20 tracking-widest mt-1">{project.id}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="border border-[#0a0a0a]/10 p-16 md:p-24 text-center">
+        <p class="font-display text-2xl text-[#0a0a0a]/20 italic">Projects coming soon</p>
+        <p class="text-xs tracking-widest uppercase text-[#0a0a0a]/15 mt-3">
+          Our portfolio is being prepared
+        </p>
+      </div>
+    )}
+
   </div>
 </section>
