@@ -1,0 +1,56 @@
+---
+// Services section
+// Replace labels and descriptions with real copy
+
+const services = [
+  {
+    title: 'FPV Drone Filmmaking',
+    description: 'Immersive, cinematic drone footage that reveals spaces from perspectives impossible with traditional cameras.',
+  },
+  {
+    title: 'Video Production',
+    description: 'Full-service video production for properties and architectural spaces, from concept to final edit.',
+  },
+  {
+    title: 'Photography',
+    description: 'High-end architectural and interior photography that captures light, texture and atmosphere.',
+  },
+  {
+    title: 'Digital 3D',
+    description: 'Photorealistic 3D renders and visualisations for projects still in development or renovation.',
+  },
+]
+---
+
+<section id="services" class="section-padding px-8 md:px-16 border-t border-[#f5f4f0]/10">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Section header -->
+    <div class="mb-16 md:mb-20">
+      <p class="text-xs tracking-[0.3em] uppercase text-[#c8b49a] mb-4">What we do</p>
+      <h2 class="font-display font-light text-4xl md:text-6xl text-[#f5f4f0]">
+        Services
+      </h2>
+    </div>
+
+    <!-- Services list -->
+    <div class="divide-y divide-[#f5f4f0]/10">
+      {
+        services.map((service, i) => (
+          <div class="group flex flex-col md:flex-row md:items-center gap-4 md:gap-16 py-8 md:py-10 cursor-default">
+            <span class="text-xs text-[#f5f4f0]/20 tracking-widest w-8 shrink-0">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="font-display text-2xl md:text-3xl text-[#f5f4f0] group-hover:text-[#c8b49a] transition-colors duration-300 md:w-72 shrink-0">
+              {service.title}
+            </h3>
+            <p class="text-[#f5f4f0]/50 text-base leading-relaxed max-w-xl">
+              {service.description}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+
+  </div>
+</section>

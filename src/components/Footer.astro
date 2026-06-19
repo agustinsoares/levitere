@@ -1,0 +1,40 @@
+---
+const year = new Date().getFullYear()
+
+const socials = [
+  { label: 'Instagram', href: '#' },
+  { label: 'Vimeo', href: '#' },
+  { label: 'LinkedIn', href: '#' },
+]
+---
+
+<footer class="px-8 md:px-16 py-12 border-t border-[#f5f4f0]/10">
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+
+    <a href="/" class="font-display text-lg tracking-widest uppercase text-[#f5f4f0]/40 hover:text-[#f5f4f0] transition-colors">
+      Levitere
+    </a>
+
+    <ul class="flex items-center gap-8">
+      {
+        socials.map((s) => (
+          <li>
+            <a
+              href={s.href}
+              class="text-xs tracking-widest uppercase text-[#f5f4f0]/30 hover:text-[#f5f4f0] transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {s.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="text-xs text-[#f5f4f0]/20 tracking-wider">
+      © {year} Levitere
+    </p>
+
+  </div>
+</footer>

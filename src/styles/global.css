@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-black: #0a0a0a;
+  --color-white: #f5f4f0;
+  --color-gray-dark: #1a1a1a;
+  --color-gray-mid: #2e2e2e;
+  --color-gray-subtle: #555555;
+  --color-accent: #c8b49a;
+
+  /* Typography */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  /* Spacing */
+  --spacing-section: 8rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-black);
+    color: var(--color-white);
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-black);
+  }
+}
+
+@layer utilities {
+  .section-padding {
+    padding-top: var(--spacing-section);
+    padding-bottom: var(--spacing-section);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+}
