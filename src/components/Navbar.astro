@@ -18,7 +18,7 @@ const navLinks = [
       <img
         src="/images/logo_name.png"
         alt="Levitere"
-        class="h-7 md:h-8 w-auto object-contain"
+        class="h-14 md:h-16 w-auto object-contain"
       />
     </a>
 
@@ -29,7 +29,7 @@ const navLinks = [
           <a
             href={link.href}
             id={`nav-${link.label.toLowerCase()}`}
-            class="nav-link text-sm tracking-widest uppercase transition-colors duration-300 text-[#f5f4f0]/70 hover:text-[#f5f4f0]"
+            class="nav-link text-sm tracking-widest uppercase transition-colors duration-300 text-white/70 hover:text-white"
           >
             {link.label}
           </a>
@@ -44,8 +44,8 @@ const navLinks = [
       aria-label="Toggle menu"
       aria-expanded="false"
     >
-      <span id="bar-1" class="block w-6 h-px bg-[#f5f4f0] transition-all duration-300"></span>
-      <span id="bar-2" class="block w-6 h-px bg-[#f5f4f0] transition-all duration-300"></span>
+      <span id="bar-1" class="block w-6 h-px bg-white transition-all duration-300"></span>
+      <span id="bar-2" class="block w-6 h-px bg-white transition-all duration-300"></span>
     </button>
   </nav>
 
@@ -81,36 +81,36 @@ const navLinks = [
 
   function setLight() {
     // White background, dark text
-    navbar?.classList.add('bg-[#f5f4f0]', 'shadow-sm')
+    navbar?.classList.add('bg-white', 'shadow-sm')
     navbar?.classList.remove('bg-transparent')
     navLinks.forEach(l => {
-      l.classList.remove('text-[#f5f4f0]/70', 'hover:text-[#f5f4f0]')
-      l.classList.add('text-[#0a0a0a]/60', 'hover:text-[#0a0a0a]')
+      l.classList.remove('text-white/70', 'hover:text-white')
+      l.classList.add('text-muted', 'hover:text-black')
     })
     mobileLinks.forEach(l => {
-      l.classList.remove('text-[#f5f4f0]/70')
-      l.classList.add('text-[#0a0a0a]/60')
+      l.classList.remove('text-white/70')
+      l.classList.add('text-muted')
     })
-    if (bar1) bar1.classList.replace('bg-[#f5f4f0]', 'bg-[#0a0a0a]')
-    if (bar2) bar2.classList.replace('bg-[#f5f4f0]', 'bg-[#0a0a0a]')
-    if (menu) menu.classList.add('bg-[#f5f4f0]')
+    if (bar1) bar1.classList.replace('bg-white', 'bg-black')
+    if (bar2) bar2.classList.replace('bg-white', 'bg-black')
+    if (menu) menu.classList.add('bg-white')
   }
 
   function setDark() {
     // Transparent background, white text (over hero video)
-    navbar?.classList.remove('bg-[#f5f4f0]', 'shadow-sm')
+    navbar?.classList.remove('bg-white', 'shadow-sm')
     navbar?.classList.add('bg-transparent')
     navLinks.forEach(l => {
-      l.classList.add('text-[#f5f4f0]/70', 'hover:text-[#f5f4f0]')
-      l.classList.remove('text-[#0a0a0a]/60', 'hover:text-[#0a0a0a]')
+      l.classList.add('text-white/70', 'hover:text-white')
+      l.classList.remove('text-muted', 'hover:text-black')
     })
     mobileLinks.forEach(l => {
-      l.classList.add('text-[#f5f4f0]/70')
-      l.classList.remove('text-[#0a0a0a]/60')
+      l.classList.add('text-white/70')
+      l.classList.remove('text-muted')
     })
-    if (bar1) bar1.classList.replace('bg-[#0a0a0a]', 'bg-[#f5f4f0]')
-    if (bar2) bar2.classList.replace('bg-[#0a0a0a]', 'bg-[#f5f4f0]')
-    if (menu) menu.classList.remove('bg-[#f5f4f0]')
+    if (bar1) bar1.classList.replace('bg-black', 'bg-white')
+    if (bar2) bar2.classList.replace('bg-black', 'bg-white')
+    if (menu) menu.classList.remove('bg-white')
   }
 
   // Initial state: over hero = dark

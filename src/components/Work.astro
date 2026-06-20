@@ -21,18 +21,18 @@ const projects: Array<{
 const hasProjects = projects.length > 0
 ---
 
-<section id="work" class="section-padding px-8 md:px-16 border-t border-[#0a0a0a]/10">
+<section id="work" class="section-padding px-8 md:px-16 border-t border-muted">
   <div class="max-w-7xl mx-auto">
 
     <div class="flex items-end justify-between mb-16 md:mb-24">
       <div>
-        <p class="text-xs tracking-[0.3em] uppercase text-[#c8b49a] mb-4">Portfolio</p>
-        <h2 class="font-display font-light text-4xl md:text-6xl text-[#0a0a0a]">
+        <p class="text-xs tracking-[0.3em] uppercase text-accent mb-4">Portfolio</p>
+        <h2 class="font-display text-4xl md:text-6xl text-black">
           Selected work
         </h2>
       </div>
       {hasProjects && (
-        <span class="hidden md:block text-sm text-[#0a0a0a]/30 tracking-widest">
+        <span class="hidden md:block text-sm text-muted tracking-widest">
           {projects.length} projects
         </span>
       )}
@@ -42,7 +42,7 @@ const hasProjects = projects.length > 0
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {projects.map((project, i) => (
           <article class={`group cursor-pointer ${project.wide ? 'md:col-span-2' : ''}`}>
-            <div class={`relative overflow-hidden bg-[#e8e6e1] ${project.wide ? 'aspect-[16/7]' : 'aspect-[4/3]'}`}>
+            <div class={`relative overflow-hidden bg-white/90 ${project.wide ? 'aspect-[16/7]' : 'aspect-[4/3]'}`}>
               {project.src && (
                 <img
                   src={project.src}
@@ -50,24 +50,24 @@ const hasProjects = projects.length > 0
                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               )}
-              <div class="absolute inset-0 bg-[#0a0a0a]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <div class="flex items-start justify-between mt-4">
               <div>
-                <h3 class="font-display text-xl md:text-2xl text-[#0a0a0a] group-hover:text-[#c8b49a] transition-colors duration-300">
+                <h3 class="font-display text-xl md:text-2xl text-black group-hover:text-accent transition-colors duration-300">
                   {project.title}
                 </h3>
-                <p class="text-sm text-[#0a0a0a]/40 mt-1">{project.category} — {project.location}</p>
+                <p class="text-sm text-muted mt-1">{project.category} — {project.location}</p>
               </div>
-              <span class="text-xs text-[#0a0a0a]/20 tracking-widest mt-1">{project.id}</span>
+              <span class="text-xs text-muted tracking-widest mt-1">{project.id}</span>
             </div>
           </article>
         ))}
       </div>
     ) : (
-      <div class="border border-[#0a0a0a]/10 p-16 md:p-24 text-center">
-        <p class="font-display text-2xl text-[#0a0a0a]/20 italic">Projects coming soon</p>
-        <p class="text-xs tracking-widest uppercase text-[#0a0a0a]/15 mt-3">
+      <div class="border border-muted rounded-2xl p-16 md:p-24 text-center">
+        <p class="font-display text-2xl text-muted italic">Projects coming soon</p>
+        <p class="text-xs tracking-widest uppercase text-muted mt-3">
           Our portfolio is being prepared
         </p>
       </div>
