@@ -16,9 +16,10 @@ const navLinks = [
     <!-- Logo -->
     <a href="/" aria-label="Levitere — Home">
       <img
+        id="nav-logo"
         src="/images/logo_name.png"
         alt="Levitere"
-        class="h-14 md:h-16 w-auto object-contain"
+        class="h-14 md:h-16 w-auto object-contain transition-opacity duration-300"
       />
     </a>
 
@@ -28,7 +29,6 @@ const navLinks = [
         <li>
           <a
             href={link.href}
-            id={`nav-${link.label.toLowerCase()}`}
             class="nav-link text-sm tracking-widest uppercase transition-colors duration-300 text-white/70 hover:text-white"
           >
             {link.label}
@@ -50,10 +50,7 @@ const navLinks = [
   </nav>
 
   <!-- Mobile menu -->
-  <div
-    id="mobile-menu"
-    class="hidden md:hidden flex-col px-8 pb-8 gap-6"
-  >
+  <div id="mobile-menu" class="hidden md:hidden flex-col px-8 pb-8 gap-6">
     {navLinks.map((link) => (
       <a
         href={link.href}
@@ -67,6 +64,7 @@ const navLinks = [
 
 <script>
   const navbar = document.getElementById('navbar')
+  const logo = document.getElementById('nav-logo') as HTMLImageElement
   const navLinks = document.querySelectorAll('.nav-link')
   const mobileLinks = document.querySelectorAll('.mobile-link')
   const bar1 = document.getElementById('bar-1')
@@ -74,13 +72,14 @@ const navLinks = [
   const toggle = document.getElementById('menu-toggle')
   const menu = document.getElementById('mobile-menu')
 
-  // Hero height threshold
+  const LOGO_WHITE = '/images/logo_name.png'
+  const LOGO_BLACK = '/images/logo_name_black.png'
+
   function getHeroHeight(): number {
     return window.innerHeight
   }
 
   function setLight() {
-    // White background, dark text
     navbar?.classList.add('bg-white', 'shadow-sm')
     navbar?.classList.remove('bg-transparent')
     navLinks.forEach(l => {
@@ -94,10 +93,10 @@ const navLinks = [
     if (bar1) bar1.classList.replace('bg-white', 'bg-black')
     if (bar2) bar2.classList.replace('bg-white', 'bg-black')
     if (menu) menu.classList.add('bg-white')
+    if (logo) logo.src = LOGO_BLACK
   }
 
   function setDark() {
-    // Transparent background, white text (over hero video)
     navbar?.classList.remove('bg-white', 'shadow-sm')
     navbar?.classList.add('bg-transparent')
     navLinks.forEach(l => {
@@ -111,9 +110,9 @@ const navLinks = [
     if (bar1) bar1.classList.replace('bg-black', 'bg-white')
     if (bar2) bar2.classList.replace('bg-black', 'bg-white')
     if (menu) menu.classList.remove('bg-white')
+    if (logo) logo.src = LOGO_WHITE
   }
 
-  // Initial state: over hero = dark
   setDark()
 
   window.addEventListener('scroll', () => {
