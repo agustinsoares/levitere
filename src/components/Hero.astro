@@ -6,14 +6,13 @@
 
   <!-- Background video -->
   <video
+    id="hero-video"
     class="absolute inset-0 w-full h-full object-cover"
     autoplay
     muted
     loop
     playsinline
-  >
-    <source src="/videos/hero.mp4" type="video/mp4" />
-  </video>
+  ></video>
 
   <!-- Dark overlay -->
   <div class="absolute inset-0 bg-black/50"></div>
@@ -53,3 +52,28 @@
     animation: scroll-line 1.8s ease-in-out infinite;
   }
 </style>
+
+<script>
+  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
+  const mobileQuery = window.matchMedia('(max-width: 767px)');
+
+  const sources = {
+    mobile: '/videos/hero-mobile.mp4',
+    desktop: '/videos/hero.mp4',
+  };
+
+  function setHeroVideoSource() {
+    if (!video) return;
+
+    const src = mobileQuery.matches ? sources.mobile : sources.desktop;
+    if (video.dataset.currentSrc === src) return;
+
+    video.dataset.currentSrc = src;
+    video.src = src;
+    video.load();
+    video.play().catch(() => {});
+  }
+
+  setHeroVideoSource();
+  mobileQuery.addEventListener('change', setHeroVideoSource);
+</script>
