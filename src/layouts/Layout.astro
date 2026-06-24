@@ -1,19 +1,31 @@
 ---
 import '../styles/global.css'
+import type { Lang } from '../i18n/utils'
 
 interface Props {
   title?: string
   description?: string
+  lang?: Lang
 }
 
 const {
   title = 'Levitere — Cinematic Visual Experiences',
   description = 'Levitere creates cinematic visual content for properties, architecture and selected spaces, combining FPV drone filmmaking, video, photography and digital 3D.',
+  lang = 'en',
 } = Astro.props
+
+const base = 'https://levitere.vercel.app'
+
+const hreflangs = [
+  { hreflang: 'en',    href: `${base}/` },
+  { hreflang: 'no',    href: `${base}/no/` },
+  { hreflang: 'es',    href: `${base}/es/` },
+  { hreflang: 'x-default', href: `${base}/` },
+]
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,6 +34,11 @@ const {
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/logo.ico" />
+
+    <!-- Hreflang (SEO multiidioma) -->
+    {hreflangs.map(({ hreflang, href }) => (
+      <link rel="alternate" hreflang={hreflang} href={href} />
+    ))}
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
