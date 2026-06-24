@@ -5,36 +5,41 @@ export { languages }
 export type { Lang }
 
 /**
- * Devuelve el objeto de traducciones para el idioma dado.
- * Uso en componentes Astro:
+ * Recorre recursivamente el objeto de traducciones y resuelve
+ * cada nodo { en, no, es } al string del idioma pedido.
+ */
+function resolve(obj: unknown, lang: Lang): unknown {
+  if (typeof obj !== 'object' || obj === null) return obj
+
+  // Si el objeto tiene las tres claves de idioma, es un nodo hoja → devolver el string
+  if ('en' in obj && 'no' in obj && 'es' in obj) {
+    return (obj as Record<Lang, string>)[lang]
+  }
+
+  // Si no, es un nodo intermedio → resolver sus hijos recursivamente
+  const result: Record<string, unknown> = {}
+  for (const key of Object.keys(obj)) {
+    result[key] = resolve((obj as Record<string, unknown>)[key], lang)
+  }
+  return result
+}
+
+/**
+ * Devuelve el objeto de traducciones completamente resuelto para el idioma dado.
  *
- *   const t = useTranslations(lang)
- *   t.nav.work   →  "Work" / "Arbeid" / "Trabajo"
+ *   const t = useTranslations('es')
+ *   t.nav.work           →  "Trabajo"
+ *   t.services.items.fpv.title  →  "Filmación con dron FPV"
  */
 export function useTranslations(lang: Lang) {
-  return new Proxy(translations, {
-    get(target, section: string) {
-      const s = target[section as keyof typeof target]
-      if (!s) return {}
-      return new Proxy(s, {
-        get(sectionTarget, key: string) {
-          const entry = sectionTarget[key as keyof typeof sectionTarget]
-          if (entry && typeof entry === 'object' && lang in entry) {
-            return (entry as Record<Lang, string>)[lang]
-          }
-          // Para objetos anidados (como services.items)
-          return entry
-        },
-      })
-    },
-  }) as unknown as TranslationProxy
+  return resolve(translations, lang) as TranslationProxy
 }
 
 /**
  * Extrae el idioma de la URL actual.
- * / o /en/  →  'en'
- * /no/      →  'no'
- * /es/      →  'es'
+ * /        →  'en'
+ * /no/     →  'no'
+ * /es/     →  'es'
  */
 export function getLangFromUrl(url: URL): Lang {
   const [, first] = url.pathname.split('/')
@@ -52,7 +57,6 @@ export function getAlternatePath(url: URL, targetLang: Lang): string {
   const hasLangPrefix = first in languages
 
   if (targetLang === 'en') {
-    // Inglés es el idioma por defecto, sin prefijo
     const path = hasLangPrefix ? rest.join('/') : segments.join('/')
     return '/' + (path || '')
   }
@@ -61,42 +65,32 @@ export function getAlternatePath(url: URL, targetLang: Lang): string {
   return `/${targetLang}/${path}`
 }
 
-// ─── Tipos ─────────────────────────────────────────────────────────────────
+// ─── Tipos ──────────────────────────────────────────────────────────────────
 
-type StringNode = string
-
-type ItemsProxy = {
-  fpv: { title: StringNode; description: StringNode }
-  video: { title: StringNode; description: StringNode }
-  photography: { title: StringNode; description: StringNode }
-  d3: { title: StringNode; description: StringNode }
-}
+type S = string
 
 type TranslationProxy = {
-  nav: { work: StringNode; about: StringNode; services: StringNode; contact: StringNode }
-  hero: { headline: StringNode; subheadline: StringNode; cta: StringNode }
-  services: { label: StringNode; title: StringNode; items: ItemsProxy }
-  work: { label: StringNode; title: StringNode; empty: StringNode; emptySub: StringNode }
+  nav: { work: S; about: S; services: S; contact: S }
+  hero: { headline: S; subheadline: S; cta: S }
+  services: {
+    label: S
+    title: S
+    items: {
+      fpv: { title: S; description: S }
+      video: { title: S; description: S }
+      photography: { title: S; description: S }
+      d3: { title: S; description: S }
+    }
+  }
+  work: { label: S; title: S; empty: S; emptySub: S }
   about: {
-    label: StringNode
-    title: StringNode
-    titleItalic: StringNode
-    p1: StringNode
-    p2: StringNode
-    p3: StringNode
-    p4: StringNode
-    oscarRole: StringNode
-    emilioRole: StringNode
+    label: S; title: S; titleItalic: S
+    p1: S; p2: S; p3: S; p4: S
+    oscarRole: S; emilioRole: S
   }
   contact: {
-    label: StringNode
-    title: StringNode
-    titleItalic: StringNode
-    subtitle: StringNode
-    namePlaceholder: StringNode
-    emailPlaceholder: StringNode
-    messagePlaceholder: StringNode
-    button: StringNode
+    label: S; title: S; titleItalic: S; subtitle: S
+    namePlaceholder: S; emailPlaceholder: S; messagePlaceholder: S; button: S
   }
-  footer: { copyright: StringNode }
+  footer: { copyright: S }
 }
