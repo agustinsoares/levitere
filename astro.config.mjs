@@ -5,6 +5,16 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://levitere.vercel.app',
+
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'no', 'es'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
+
   vite: {
     plugins: [tailwindcss()]
   }
