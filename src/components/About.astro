@@ -1,42 +1,42 @@
 ---
-// About section — Oscar & Emilio story + presentation video
+import { useTranslations } from '../i18n/utils'
+import type { Lang } from '../i18n/utils'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="about" class="section-padding px-8 md:px-16 border-t border-muted">
   <div class="max-w-7xl mx-auto">
 
-    <p class="text-xs tracking-[0.3em] uppercase text-accent mb-16 md:mb-20">About us</p>
+    <p class="text-xs tracking-[0.3em] uppercase text-accent mb-16 md:mb-20">{t.about.label}</p>
 
     <!-- Headline + body -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 mb-16 md:mb-20 items-start">
 
       <h2 class="font-display text-4xl md:text-5xl text-black leading-[1.15]">
-        A creative partnership<br />
-        <em class="italic">born in Bergen</em>
+        {t.about.title}<br />
+        <em class="italic">{t.about.titleItalic}</em>
       </h2>
 
       <div class="space-y-5 text-muted text-base leading-relaxed">
-        <p>
-          Levitere is a young creative studio founded by Oscar and Emilio, aged 22 and 23, after meeting in Bergen, Norway.
-        </p>
-        <p>
-          Oscar is an FPV drone pilot. Emilio is a photographer, videographer and editor. What started as a friendship became a creative partnership built around a shared way of seeing spaces, movement and visual storytelling.
-        </p>
-        <p>
-          Together, we created Levitere to produce high-end audiovisual content for real estate, architecture, brands and selected spaces that need to be presented with a more modern and immersive visual language.
-        </p>
-        <p>
-          Our approach combines a young creative perspective with technical precision — bringing together drone flight, video, photography, editing and digital 3D craft to help each project communicate with clarity, atmosphere and impact.
-        </p>
+        <p>{t.about.p1}</p>
+        <p>{t.about.p2}</p>
+        <p>{t.about.p3}</p>
+        <p>{t.about.p4}</p>
 
         <div class="pt-6 flex gap-10 border-t border-muted">
           <div>
             <p class="font-display text-xl text-black">Oscar</p>
-            <p class="text-xs tracking-widest uppercase text-muted mt-1">FPV Drone Pilot</p>
+            <p class="text-xs tracking-widest uppercase text-muted mt-1">{t.about.oscarRole}</p>
           </div>
           <div>
             <p class="font-display text-xl text-black">Emilio</p>
-            <p class="text-xs tracking-widest uppercase text-muted mt-1">Photographer & Editor</p>
+            <p class="text-xs tracking-widest uppercase text-muted mt-1">{t.about.emilioRole}</p>
           </div>
         </div>
       </div>

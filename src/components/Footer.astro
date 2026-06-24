@@ -1,10 +1,20 @@
 ---
+import { useTranslations } from '../i18n/utils'
+import type { Lang } from '../i18n/utils'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+
 const year = new Date().getFullYear()
 
 const socials = [
   { label: 'Instagram', href: '#' },
-  { label: 'Vimeo', href: '#' },
-  { label: 'LinkedIn', href: '#' },
+  { label: 'Vimeo',     href: '#' },
+  { label: 'LinkedIn',  href: '#' },
 ]
 ---
 

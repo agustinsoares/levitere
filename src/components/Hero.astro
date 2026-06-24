@@ -1,5 +1,13 @@
 ---
-// Hero section — full viewport cinematic video background
+import { useTranslations } from '../i18n/utils'
+import type { Lang } from '../i18n/utils'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="hero" class="relative h-screen w-full flex items-end overflow-hidden">
@@ -23,14 +31,14 @@
   <!-- Content -->
   <div class="relative z-10 px-8 md:px-16 pb-20 md:pb-32 max-w-5xl">
     <h1 class="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-[1.05] mb-8">
-      Cinematic visual experiences<br />
-      <em class="italic">for a new era of<br />property marketing</em>
+      {t.hero.headline}<br />
+      <em class="italic">{t.hero.subheadline}</em>
     </h1>
     <a
       href="#about"
       class="inline-flex items-center gap-3 text-sm tracking-widest uppercase text-white/60 hover:text-white transition-colors group"
     >
-      Learn About Us
+      {t.hero.cta}
       <span class="block w-8 h-px bg-current transition-all duration-300 group-hover:w-12"></span>
     </a>
   </div>
@@ -54,26 +62,24 @@
 </style>
 
 <script>
-  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
-  const mobileQuery = window.matchMedia('(max-width: 767px)');
+  const video = document.getElementById('hero-video') as HTMLVideoElement | null
+  const mobileQuery = window.matchMedia('(max-width: 767px)')
 
   const sources = {
     mobile: '/videos/hero-mobile.mp4',
     desktop: '/videos/hero.mp4',
-  };
-
-  function setHeroVideoSource() {
-    if (!video) return;
-
-    const src = mobileQuery.matches ? sources.mobile : sources.desktop;
-    if (video.dataset.currentSrc === src) return;
-
-    video.dataset.currentSrc = src;
-    video.src = src;
-    video.load();
-    video.play().catch(() => {});
   }
 
-  setHeroVideoSource();
-  mobileQuery.addEventListener('change', setHeroVideoSource);
+  function setHeroVideoSource() {
+    if (!video) return
+    const src = mobileQuery.matches ? sources.mobile : sources.desktop
+    if (video.dataset.currentSrc === src) return
+    video.dataset.currentSrc = src
+    video.src = src
+    video.load()
+    video.play().catch(() => {})
+  }
+
+  setHeroVideoSource()
+  mobileQuery.addEventListener('change', setHeroVideoSource)
 </script>

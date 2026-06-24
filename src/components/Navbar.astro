@@ -1,10 +1,21 @@
 ---
+import { getLangFromUrl, getAlternatePath, languages } from '../i18n/utils'
+
+const lang = getLangFromUrl(Astro.url)
+
 const navLinks = [
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
   { label: 'Services', href: '#services' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Work',     href: '#work' },
+  { label: 'About',    href: '#about' },
+  { label: 'Contact',  href: '#contact' },
 ]
+
+const langOptions = (Object.keys(languages) as Array<keyof typeof languages>).map((code) => ({
+  code,
+  label: code.toUpperCase(),
+  href: getAlternatePath(Astro.url, code),
+  active: code === lang,
+}))
 ---
 
 <header
@@ -23,21 +34,67 @@ const navLinks = [
       />
     </a>
 
-    <!-- Desktop links -->
-    <ul class="hidden md:flex items-center gap-10">
-      {navLinks.map((link) => (
-        <li>
-          <a
-            href={link.href}
-            class="nav-link text-sm tracking-widest uppercase transition-colors duration-300 text-white/70 hover:text-white"
-          >
-            {link.label}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <!-- Desktop: links + lang switcher -->
+    <div class="hidden md:flex items-center gap-10">
+      <ul class="flex items-center gap-10">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="nav-link text-sm tracking-widest uppercase transition-colors duration-300 text-white/70 hover:text-white"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
 
-    <!-- Mobile hamburger -->
+      <!-- Desktop lang dropdown -->
+      <div class="relative" id="lang-desktop">
+        <button
+          id="lang-toggle-desktop"
+          class="lang-toggle flex items-center gap-1.5 text-sm tracking-widest uppercase transition-colors duration-300 text-white/70 hover:text-white"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          {lang.toUpperCase()}
+          <svg
+            id="lang-chevron-desktop"
+            class="w-3 h-3 transition-transform duration-200"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <ul
+          id="lang-menu-desktop"
+          class="lang-menu absolute right-0 top-full mt-3 hidden flex-col min-w-[80px] rounded-xl overflow-hidden shadow-lg border border-white/10 bg-white/10 backdrop-blur-md"
+          role="menu"
+        >
+          {langOptions.map((opt) => (
+            <li role="none">
+              <a
+                href={opt.href}
+                role="menuitem"
+                class:list={[
+                  'block px-4 py-2.5 text-xs tracking-widest uppercase transition-colors duration-200',
+                  opt.active
+                    ? 'text-accent font-medium'
+                    : 'text-white/70 hover:text-white hover:bg-white/10',
+                ]}
+              >
+                {opt.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Mobile: hamburger -->
     <button
       id="menu-toggle"
       class="md:hidden flex flex-col gap-[5px] p-2"
@@ -59,27 +116,77 @@ const navLinks = [
         {link.label}
       </a>
     ))}
+
+    <!-- Mobile lang switcher -->
+    <div class="pt-2 border-t border-white/10">
+      <div class="relative" id="lang-mobile">
+        <button
+          id="lang-toggle-mobile"
+          class="lang-toggle flex items-center gap-1.5 text-sm tracking-widest uppercase transition-colors duration-300 text-white/70 hover:text-white"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          {lang.toUpperCase()}
+          <svg
+            id="lang-chevron-mobile"
+            class="w-3 h-3 transition-transform duration-200"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <ul
+          id="lang-menu-mobile"
+          class="lang-menu hidden flex-col mt-3 gap-1"
+          role="menu"
+        >
+          {langOptions.map((opt) => (
+            <li role="none">
+              <a
+                href={opt.href}
+                role="menuitem"
+                class:list={[
+                  'block text-xs tracking-widest uppercase transition-colors duration-200 py-1',
+                  opt.active
+                    ? 'text-accent font-medium'
+                    : 'text-white/50 hover:text-white',
+                ]}
+              >
+                {opt.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   </div>
 </header>
 
 <script>
-  const navbar = document.getElementById('navbar')
-  const logo = document.getElementById('nav-logo') as HTMLImageElement
-  const navLinks = document.querySelectorAll('.nav-link')
+  // ─── Navbar scroll ──────────────────────────────────────────────────────
+
+  const navbar  = document.getElementById('navbar')
+  const logo    = document.getElementById('nav-logo') as HTMLImageElement
+  const navLinks    = document.querySelectorAll('.nav-link')
   const mobileLinks = document.querySelectorAll('.mobile-link')
-  const bar1 = document.getElementById('bar-1')
-  const bar2 = document.getElementById('bar-2')
+  const bar1   = document.getElementById('bar-1')
+  const bar2   = document.getElementById('bar-2')
   const toggle = document.getElementById('menu-toggle')
-  const menu = document.getElementById('mobile-menu')
+  const menu   = document.getElementById('mobile-menu')
+
+  const langToggles  = document.querySelectorAll('.lang-toggle')
+  const langMenus    = document.querySelectorAll('.lang-menu')
 
   const LOGO_WHITE = '/images/logo_name.png'
   const LOGO_BLACK = '/images/logo_name_black.png'
 
-  function getHeroHeight(): number {
-    return window.innerHeight
-  }
+  let isLight = false
 
   function setLight() {
+    isLight = true
     navbar?.classList.add('bg-white', 'shadow-sm')
     navbar?.classList.remove('bg-transparent')
     navLinks.forEach(l => {
@@ -90,13 +197,27 @@ const navLinks = [
       l.classList.remove('text-white/70')
       l.classList.add('text-muted')
     })
+    langToggles.forEach(l => {
+      l.classList.remove('text-white/70', 'hover:text-white')
+      l.classList.add('text-muted', 'hover:text-black')
+    })
     if (bar1) bar1.classList.replace('bg-white', 'bg-black')
     if (bar2) bar2.classList.replace('bg-white', 'bg-black')
     if (menu) menu.classList.add('bg-white')
     if (logo) logo.src = LOGO_BLACK
+
+    // Desktop dropdown: adaptar fondo claro
+    const desktopMenu = document.getElementById('lang-menu-desktop')
+    desktopMenu?.classList.remove('bg-white/10', 'border-white/10')
+    desktopMenu?.classList.add('bg-white', 'border-black/10', 'shadow-md')
+    desktopMenu?.querySelectorAll('a:not(.text-accent)').forEach(a => {
+      a.classList.remove('text-white/70', 'hover:text-white', 'hover:bg-white/10')
+      a.classList.add('text-muted', 'hover:text-black', 'hover:bg-black/5')
+    })
   }
 
   function setDark() {
+    isLight = false
     navbar?.classList.remove('bg-white', 'shadow-sm')
     navbar?.classList.add('bg-transparent')
     navLinks.forEach(l => {
@@ -107,27 +228,42 @@ const navLinks = [
       l.classList.add('text-white/70')
       l.classList.remove('text-muted')
     })
+    langToggles.forEach(l => {
+      l.classList.add('text-white/70', 'hover:text-white')
+      l.classList.remove('text-muted', 'hover:text-black')
+    })
     if (bar1) bar1.classList.replace('bg-black', 'bg-white')
     if (bar2) bar2.classList.replace('bg-black', 'bg-white')
     if (menu) menu.classList.remove('bg-white')
     if (logo) logo.src = LOGO_WHITE
+
+    // Desktop dropdown: volver a modo oscuro
+    const desktopMenu = document.getElementById('lang-menu-desktop')
+    desktopMenu?.classList.add('bg-white/10', 'border-white/10')
+    desktopMenu?.classList.remove('bg-white', 'border-black/10', 'shadow-md')
+    desktopMenu?.querySelectorAll('a:not(.text-accent)').forEach(a => {
+      a.classList.add('text-white/70', 'hover:text-white', 'hover:bg-white/10')
+      a.classList.remove('text-muted', 'hover:text-black', 'hover:bg-black/5')
+    })
   }
 
   setDark()
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY >= getHeroHeight() - 80) {
+    if (window.scrollY >= window.innerHeight - 80) {
       setLight()
     } else {
       setDark()
     }
   })
 
-  // Mobile toggle
-  let open = false
+  // ─── Mobile menu toggle ─────────────────────────────────────────────────
+
+  let menuOpen = false
+
   toggle?.addEventListener('click', () => {
-    open = !open
-    if (open) {
+    menuOpen = !menuOpen
+    if (menuOpen) {
       menu?.classList.remove('hidden')
       menu?.classList.add('flex')
       bar1?.classList.add('rotate-45', 'translate-y-[7px]')
@@ -139,17 +275,66 @@ const navLinks = [
       bar1?.classList.remove('rotate-45', 'translate-y-[7px]')
       bar2?.classList.remove('-rotate-45')
       toggle.setAttribute('aria-expanded', 'false')
+      closeLangMenu('mobile')
     }
   })
 
   document.querySelectorAll('.mobile-link').forEach(link => {
     link.addEventListener('click', () => {
-      open = false
+      menuOpen = false
       menu?.classList.add('hidden')
       menu?.classList.remove('flex')
       bar1?.classList.remove('rotate-45', 'translate-y-[7px]')
       bar2?.classList.remove('-rotate-45')
       toggle?.setAttribute('aria-expanded', 'false')
+      closeLangMenu('mobile')
     })
+  })
+
+  // ─── Lang dropdown ──────────────────────────────────────────────────────
+
+  function openLangMenu(which: 'desktop' | 'mobile') {
+    const btn  = document.getElementById(`lang-toggle-${which}`)
+    const ul   = document.getElementById(`lang-menu-${which}`)
+    const chev = document.getElementById(`lang-chevron-${which}`)
+    ul?.classList.remove('hidden')
+    ul?.classList.add('flex')
+    chev?.classList.add('rotate-180')
+    btn?.setAttribute('aria-expanded', 'true')
+  }
+
+  function closeLangMenu(which: 'desktop' | 'mobile') {
+    const btn  = document.getElementById(`lang-toggle-${which}`)
+    const ul   = document.getElementById(`lang-menu-${which}`)
+    const chev = document.getElementById(`lang-chevron-${which}`)
+    ul?.classList.add('hidden')
+    ul?.classList.remove('flex')
+    chev?.classList.remove('rotate-180')
+    btn?.setAttribute('aria-expanded', 'false')
+  }
+
+  function toggleLangMenu(which: 'desktop' | 'mobile') {
+    const ul = document.getElementById(`lang-menu-${which}`)
+    const isHidden = ul?.classList.contains('hidden')
+    // Cerrar ambos primero
+    closeLangMenu('desktop')
+    closeLangMenu('mobile')
+    if (isHidden) openLangMenu(which)
+  }
+
+  document.getElementById('lang-toggle-desktop')?.addEventListener('click', (e) => {
+    e.stopPropagation()
+    toggleLangMenu('desktop')
+  })
+
+  document.getElementById('lang-toggle-mobile')?.addEventListener('click', (e) => {
+    e.stopPropagation()
+    toggleLangMenu('mobile')
+  })
+
+  // Cerrar dropdown al hacer click fuera
+  document.addEventListener('click', () => {
+    closeLangMenu('desktop')
+    closeLangMenu('mobile')
   })
 </script>

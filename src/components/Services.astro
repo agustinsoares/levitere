@@ -1,49 +1,38 @@
 ---
-const services = [
-  {
-    title: 'FPV Drone Filmmaking',
-    description:
-      'Fluid, immersive drone footage that reveals spaces from perspectives impossible with traditional cameras. We fly indoors, outdoors and through architectural transitions with precision.',
-  },
-  {
-    title: 'Video Production',
-    description:
-      'Full-service video for real estate and architecture — from cinematic walkthroughs to brand films. Concept, shoot, edit and colour grade, all under one roof.',
-  },
-  {
-    title: 'Photography',
-    description:
-      'High-end architectural and interior photography that captures the true atmosphere of a space: its light, materiality and character.',
-  },
-  {
-    title: 'Digital 3D',
-    description:
-      'Photorealistic 3D renders and visualisations for projects under development, renovation or refurbishment — so clients can see what does not yet exist.',
-  },
-]
+import { useTranslations } from '../i18n/utils'
+import type { Lang } from '../i18n/utils'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+
+const serviceKeys = ['fpv', 'video', 'photography', 'd3'] as const
 ---
 
 <section id="services" class="section-padding px-8 md:px-16 border-t border-muted">
   <div class="max-w-7xl mx-auto">
 
     <div class="mb-16 md:mb-20">
-      <p class="text-xs tracking-[0.3em] uppercase text-accent mb-4">What we do</p>
+      <p class="text-xs tracking-[0.3em] uppercase text-accent mb-4">{t.services.label}</p>
       <h2 class="font-display text-4xl md:text-6xl text-black">
-        Services
+        {t.services.title}
       </h2>
     </div>
 
     <div class="divide-y divide-muted">
-      {services.map((service, i) => (
+      {serviceKeys.map((key, i) => (
         <div class="group flex flex-col md:flex-row md:items-start gap-4 md:gap-16 py-8 md:py-12">
           <span class="text-xs text-muted tracking-widest w-8 shrink-0 pt-1">
             {String(i + 1).padStart(2, '0')}
           </span>
           <h3 class="font-display text-2xl md:text-3xl text-black group-hover:text-accent transition-colors duration-300 md:w-72 shrink-0">
-            {service.title}
+            {t.services.items[key].title}
           </h3>
           <p class="text-muted text-base leading-relaxed max-w-xl">
-            {service.description}
+            {t.services.items[key].description}
           </p>
         </div>
       ))}
