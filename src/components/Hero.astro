@@ -8,45 +8,79 @@ interface Props {
 
 const { lang } = Astro.props
 const t = useTranslations(lang)
+
+// Scroll-driven hero: the section is 500vh tall (100vh sticky + 4 screens of scroll).
+// Each service appears at a point of the scroll, alternating right / left.
+const FRAME_COUNT = 229
+
+const services = [
+  { key: 'fpv', side: 'right' },
+  { key: 'video', side: 'left' },
+  { key: 'photography', side: 'right' },
+  { key: 'd3', side: 'left' },
+] as const
 ---
 
-<section id="hero" class="relative h-screen w-full flex items-end overflow-hidden">
+<section id="hero" class="relative w-full h-[500vh]" data-frame-count={FRAME_COUNT}>
+  <div class="sticky top-0 h-screen w-full overflow-hidden">
 
-  <!-- Background video -->
-  <video
-    id="hero-video"
-    class="absolute inset-0 w-full h-full object-cover"
-    autoplay
-    muted
-    loop
-    playsinline
-  ></video>
+    <!-- Background frames (drawn on scroll) -->
+    <canvas id="hero-canvas" class="absolute inset-0 w-full h-full"></canvas>
 
-  <!-- Dark overlay -->
-  <div class="absolute inset-0 bg-black/50"></div>
+    <!-- Dark overlay -->
+    <div class="absolute inset-0 bg-black/50"></div>
 
-  <!-- Gradient bottom -->
-  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+    <!-- Gradient bottom -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
 
-  <!-- Content -->
-  <div class="relative z-10 px-8 md:px-16 pb-20 md:pb-32 max-w-5xl">
-    <h1 class="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-[1.05] mb-8">
-      {t.hero.headline}<br />
-      <em class="italic">{t.hero.subheadline}</em>
-    </h1>
-    <a
-      href="#about"
-      class="inline-flex items-center gap-3 text-sm tracking-widest uppercase text-white/60 hover:text-white transition-colors group"
+    <!-- Headline -->
+    <div
+      class="hero-step absolute inset-x-0 bottom-0 z-10 px-8 md:px-16 pb-20 md:pb-32 max-w-5xl"
+      data-start="-1"
+      data-end="0.14"
+      data-side="left"
     >
-      {t.hero.cta}
-      <span class="block w-8 h-px bg-current transition-all duration-300 group-hover:w-12"></span>
-    </a>
-  </div>
+      <h1 class="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-[1.05] mb-8">
+        {t.hero.headline}<br />
+        <em class="italic">{t.hero.subheadline}</em>
+      </h1>
+      <a
+        href="#services"
+        class="inline-flex items-center gap-3 text-sm tracking-widest uppercase text-white/60 hover:text-white transition-colors group"
+      >
+        {t.hero.cta}
+        <span class="block w-8 h-px bg-current transition-all duration-300 group-hover:w-12"></span>
+      </a>
+    </div>
 
-  <!-- Scroll indicator -->
-  <div class="absolute bottom-10 right-8 md:right-16 flex flex-col items-center gap-2">
-    <div class="w-px h-14 bg-white/20 relative overflow-hidden">
-      <div class="w-full h-full bg-accent animate-scroll-line"></div>
+    <!-- Services, one at a time -->
+    {services.map(({ key, side }, i) => (
+      <div
+        class:list={[
+          'hero-step absolute inset-x-0 bottom-0 z-10 px-8 md:px-16 pb-20 md:pb-32 flex pointer-events-none',
+          side === 'right' ? 'justify-end text-right' : 'justify-start text-left',
+        ]}
+        data-start={0.16 + i * 0.2}
+        data-end={0.32 + i * 0.2}
+        data-side={side}
+        style="opacity: 0"
+      >
+        <div class="max-w-3xl">
+          <p class="text-xs tracking-[0.3em] uppercase text-accent mb-4">
+            {String(i + 1).padStart(2, '0')}
+          </p>
+          <h2 class="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-[1.05]">
+            {t.services.items[key].title}
+          </h2>
+        </div>
+      </div>
+    ))}
+
+    <!-- Scroll indicator -->
+    <div id="hero-indicator" class="absolute bottom-10 right-8 md:right-16 flex flex-col items-center gap-2">
+      <div class="w-px h-14 bg-white/20 relative overflow-hidden">
+        <div class="w-full h-full bg-accent animate-scroll-line"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -59,27 +93,150 @@ const t = useTranslations(lang)
   .animate-scroll-line {
     animation: scroll-line 1.8s ease-in-out infinite;
   }
+  .hero-step {
+    will-change: opacity, transform;
+  }
 </style>
 
 <script>
-  const video = document.getElementById('hero-video') as HTMLVideoElement | null
+  const section = document.getElementById('hero') as HTMLElement | null
+  const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null
+  const ctx = canvas?.getContext('2d')
+  const steps = Array.from(document.querySelectorAll<HTMLElement>('.hero-step'))
+  const indicator = document.getElementById('hero-indicator')
   const mobileQuery = window.matchMedia('(max-width: 767px)')
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  const sources = {
-    mobile: '/videos/hero-mobile.mp4',
-    desktop: '/videos/hero.mp4',
+  const frameCount = Number(section?.dataset.frameCount ?? 0)
+  const FADE = 0.04 // portion of scroll used to fade each text in / out
+
+  let frames: HTMLImageElement[] = []
+  let currentFrame = 0
+  let targetFrame = 0
+  let lastDrawn = -1
+  let progress = 0
+
+  function frameSrc(folder: string, i: number) {
+    return `/frames/${folder}/${String(i + 1).padStart(4, '0')}.webp`
   }
 
-  function setHeroVideoSource() {
-    if (!video) return
-    const src = mobileQuery.matches ? sources.mobile : sources.desktop
-    if (video.dataset.currentSrc === src) return
-    video.dataset.currentSrc = src
-    video.src = src
-    video.load()
-    video.play().catch(() => {})
+  // Load frame 0 first, then coarse-to-fine so any scroll position quickly has a nearby frame
+  function loadFrames() {
+    const folder = mobileQuery.matches ? 'mobile' : 'desktop'
+    frames = new Array(frameCount)
+    lastDrawn = -1
+
+    const order: number[] = []
+    const seen = new Set<number>()
+    for (const stepSize of [16, 8, 4, 2, 1]) {
+      for (let i = 0; i < frameCount; i += stepSize) {
+        if (!seen.has(i)) { seen.add(i); order.push(i) }
+      }
+    }
+
+    let next = 0
+    const loadNext = () => {
+      if (next >= order.length) return
+      const i = order[next++]
+      const img = new Image()
+      img.decoding = 'async'
+      img.onload = () => {
+        if (i === 0 || Math.abs(i - Math.round(currentFrame)) < 16) lastDrawn = -1
+        loadNext()
+      }
+      img.onerror = loadNext
+      img.src = frameSrc(folder, i)
+      frames[i] = img
+    }
+    // a few parallel requests
+    for (let k = 0; k < 6; k++) loadNext()
   }
 
-  setHeroVideoSource()
-  mobileQuery.addEventListener('change', setHeroVideoSource)
+  function nearestLoaded(index: number) {
+    for (let d = 0; d < frameCount; d++) {
+      const a = frames[index - d]
+      if (a?.complete && a.naturalWidth) return a
+      const b = frames[index + d]
+      if (b?.complete && b.naturalWidth) return b
+    }
+    return null
+  }
+
+  function resizeCanvas() {
+    if (!canvas) return
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = Math.round(canvas.clientWidth * dpr)
+    canvas.height = Math.round(canvas.clientHeight * dpr)
+    lastDrawn = -1
+  }
+
+  // draw with object-fit: cover behaviour
+  function draw(index: number) {
+    if (!canvas || !ctx) return
+    const img = nearestLoaded(index)
+    if (!img) return
+    const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight)
+    const w = img.naturalWidth * scale
+    const h = img.naturalHeight * scale
+    ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h)
+  }
+
+  function updateProgress() {
+    if (!section) return
+    const scrollable = section.offsetHeight - window.innerHeight
+    const top = section.getBoundingClientRect().top
+    progress = Math.min(1, Math.max(0, -top / scrollable))
+    targetFrame = progress * (frameCount - 1)
+    updateSteps()
+  }
+
+  function updateSteps() {
+    for (const el of steps) {
+      const start = Number(el.dataset.start)
+      const end = Number(el.dataset.end)
+      const dir = el.dataset.side === 'right' ? 1 : -1
+
+      let o: number
+      if (progress < start) o = 0
+      else if (progress < start + FADE) o = (progress - start) / FADE
+      else if (progress <= end - FADE) o = 1
+      else if (progress <= end) o = (end - progress) / FADE
+      else o = 0
+
+      // slide in from its side, slide out a little upwards
+      const entering = progress < start + FADE
+      const x = entering ? (1 - o) * 60 * dir : 0
+      const y = !entering ? (1 - o) * -40 : 0
+
+      el.style.opacity = String(o)
+      el.style.transform = `translate3d(${x}px, ${y}px, 0)`
+      el.style.visibility = o === 0 ? 'hidden' : 'visible'
+      el.style.pointerEvents = o > 0.5 && el.querySelector('a') ? 'auto' : 'none'
+    }
+    if (indicator) indicator.style.opacity = String(Math.max(0, 1 - progress * 8))
+  }
+
+  function tick() {
+    // smooth the frame change a bit
+    const diff = targetFrame - currentFrame
+    currentFrame = reducedMotion || Math.abs(diff) < 0.05 ? targetFrame : currentFrame + diff * 0.2
+    const index = Math.round(currentFrame)
+    if (index !== lastDrawn) {
+      draw(index)
+      if (nearestLoaded(index) === frames[index]) lastDrawn = index
+    }
+    requestAnimationFrame(tick)
+  }
+
+  if (section && canvas && ctx && frameCount > 0) {
+    resizeCanvas()
+    loadFrames()
+    updateProgress()
+    currentFrame = targetFrame
+    requestAnimationFrame(tick)
+
+    window.addEventListener('scroll', updateProgress, { passive: true })
+    window.addEventListener('resize', () => { resizeCanvas(); updateProgress() })
+    mobileQuery.addEventListener('change', loadFrames)
+  }
 </script>
